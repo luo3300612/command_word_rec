@@ -129,11 +129,11 @@ class CHMM:
 
     def load(self, path):
         file = h5py.File(path, 'r')
-        self.A = file['A'].value
+        self.A = file['A'][()]
         for i, B in enumerate(self.B):
-            B.weights = [file['B{}_weight{}'.format(i, j)].value for j in range(B.K)]
-            B.means = [file['B{}_mean{}'.format(i, j)].value for j in range(B.K)]
-            B.covars = [file['B{}_covar{}'.format(i, j)].value for j in range(B.K)]
+            B.weights = [file['B{}_weight{}'.format(i, j)][()] for j in range(B.K)]
+            B.means = [file['B{}_mean{}'.format(i, j)][()] for j in range(B.K)]
+            B.covars = [file['B{}_covar{}'.format(i, j)][()] for j in range(B.K)]
         file.close()
 
 

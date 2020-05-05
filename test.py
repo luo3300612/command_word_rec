@@ -8,6 +8,8 @@ from tqdm import tqdm
 from prep_data import word2phoneme, get_mfcc
 import matplotlib.pyplot as plt
 import argparse
+import warnings
+warnings.filterwarnings('ignore')
 
 command_words = ['前进', '后退', '左转', '右转']
 model_path = './saved_models/0503_1644/step11'

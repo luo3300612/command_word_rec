@@ -10,6 +10,7 @@ from python_speech_features import mfcc, delta
 import scipy.io.wavfile as wav
 import matplotlib.pyplot as plt
 
+
 # About Data
 data_root = 'data'
 phone_numbers = ['13776677136']
@@ -91,7 +92,7 @@ if __name__ == '__main__':
                          'id': filename.split('.')[0]}
                 out.append(entry)
 
-                features.create_dataset(entry['id'], data=get_mfcc(entry['wav_path'],dim=args.mfcc_dim))
+                features.create_dataset(entry['id'], data=get_mfcc(entry['wav_path'], dim=args.mfcc_dim))
 
     # statistic
     c = Counter()

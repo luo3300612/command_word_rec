@@ -68,6 +68,7 @@ if __name__ == '__main__':
     last_dataset_loglikelihood = 0
     dataset_loglikelihood_history = np.zeros((max_steps,))
     for step in range(max_steps):
+        print('Step {}:'.format(step))
         print('e-step')
         dataset_loglikelihood = 0
         with tqdm(desc='E-step', unit='it', total=len(wav_hmm)) as pbar:
