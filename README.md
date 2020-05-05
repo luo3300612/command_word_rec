@@ -1,5 +1,9 @@
 # Command Word Recognition
 Command Word Recognition is based on a phoneme level GMM-HMM embedding model
+## dependency
+```angular2
+pip install -r requirements.txt
+```
 ## Steps
 ### Step1, Build lexicon
 Build lexicon which maps a character to phonemes
