@@ -6,7 +6,7 @@ import numpy as np
 from python_speech_features import *
 import scipy.io.wavfile as wav
 from gmm import GMM
-from hmm_gmm import CHMM, ConnectedCHMM, logSumExp
+from gmm_hmm import CHMM, ConnectedCHMM, logSumExp
 import h5py
 from utils import elog
 from collections import Counter

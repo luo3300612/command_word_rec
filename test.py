@@ -1,4 +1,4 @@
-from hmm_gmm import CHMM, ConnectedCHMM
+from gmm_hmm import CHMM, ConnectedCHMM
 import numpy as np
 from main import covar_type, hmm_init
 import json
