@@ -24,12 +24,22 @@ python test.py
 ```
 Remember to change model_path in test.py. It will give viterbi align and accuracy.
 ## Results
-results of 39 dim mfcc feature
-![]
-![]
-results of 13 dim mfcc feature
-![]
-![]
+results of 39 dim mfcc feature:
+
+![](https://github.com/luo3300612/command_word_rec/blob/master/assets/accuracy.png)
+
+![](https://github.com/luo3300612/command_word_rec/blob/master/assets/loglikelihood.png)
+
+results of 13 dim mfcc feature:
+
+![](https://github.com/luo3300612/command_word_rec/blob/master/assets/accuracy39.png)
+
+![](https://github.com/luo3300612/command_word_rec/blob/master/assets/loglikelihood39.png)
+
+viterbi align:
+
+![](https://github.com/luo3300612/command_word_rec/blob/master/assets/align.png)
+
 ## References
 * [DaCiDian](https://github.com/aishell-foundation/DaCiDian)
 * [hmmlearn](https://github.com/hmmlearn/hmmlearn)
