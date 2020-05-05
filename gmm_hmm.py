@@ -40,7 +40,6 @@ class CHMM:
     def assign(self, features, states=None):
         # for viterbi training
         # if states is not given, average split features to each state
-        # print(features.shape)
         assert features.shape[1] == self.B[0].n
         if states is None:
             for feats_list, feats in zip(self.feats_lists, np.array_split(features, self.N - 1)):
@@ -180,6 +179,8 @@ class ConnectedCHMM:
         self.log_b = None
 
     def assign(self, wav_feats, states=None):
+        # for viterbi training
+        # if states is not given, average split features to each hmm
         self.wav_feats = wav_feats
         if states is None:  # average split
             for phoneme_hmm, phoneme_feats in zip(self.hmms, np.array_split(wav_feats, self.num_hmms)):
