@@ -11,6 +11,7 @@ class CHMM:
     """
     Continuous HMM
     """
+
     def __init__(self, N, A, GMM_kwargs, pi, state_map=None, observation_map=None):
         self.N = N  # kinds of states, int
         # self.M = M  # kinds of observed results, int
@@ -23,19 +24,6 @@ class CHMM:
         self.state_transfer_historys = []
         if state_map is None:
             self.state_map = ['s' + str(i) for i in range(1, N + 1)]
-
-    def sample(self, step=5):
-        raise NotImplementedError
-        # state_history = []
-        # observation_history = []
-        # if step is 0:
-        #     return state_history, observation_history
-        # state_history.append(multinomial_sample(self.pi))
-        # observation_history.append(self.B[state_history[-1]].sample(1))
-        # for t in range(step - 1):
-        #     state_history.append(multinomial_sample(self.A[state_history[-1]]))
-        #     observation_history.append(self.B[state_history[-1]].sample(1))
-        # return state_history, observation_history
 
     def assign(self, features, states=None):
         # for viterbi training
@@ -53,15 +41,6 @@ class CHMM:
             for state_feat_list, feats in zip(self.feats_lists, splited_feats):
                 state_feat_list.append(feats)
             self.state_transfer_historys.append(states)
-            # print('states')
-            # print(states)
-            # print('split1')
-            # print(np_state_split)
-            # print('split2')
-            # print(ac_np_state_split)
-        # print(s1.shape)
-        # print(s2.shape)
-        # print(s3.shape)
 
     def init_gmm(self, verbose=False):
         """
@@ -247,38 +226,6 @@ class ConnectedCHMM:
             log_delta1[:, t] = log_b[:, t] + np.max(log_delta1[:, t - 1].reshape((-1, 1)) + log_a, axis=0)
 
         # assert np.allclose(log_delta0,log_delta1)
-        try:
-            assert not np.isnan(log_delta1).any()
-        except AssertionError:
-            print('cal process of log_delta')
-            print('t=0')
-            print('log pi:')
-            print(elog(np.array(self.pi)))
-            print('log b [:,0]')
-            print(log_b[:, 0])
-            flag = False
-            for t in range(1, T + 1):
-                for j in range(N):
-                    print('t={},j={}'.format(t, j))
-                    print('log_b[j,t]')
-                    print(log_b[j, t])
-                    print('log_delta[:,t-1]')
-                    print(log_delta1[:, t - 1])
-                    print('log_a[:,j]')
-                    print(log_a[:, j])
-                    print('log_delta[:,t-1]+log_a[:,j]')
-                    print(log_delta1[:, t - 1] + log_a[:, j])
-                    print('max')
-                    print(np.max(log_delta1[:, t - 1] + log_a[:, j]))
-                    print('argmax')
-                    print(np.argmax(log_delta1[:, t - 1] + log_a[:, j]))
-                    if np.isnan(log_delta1[j, t]).any():
-                        flag = True
-                        break
-                if flag:
-                    break
-            raise
-
         return log_delta1
 
     def decode_viterbi(self, observation=None):
@@ -298,7 +245,7 @@ class ConnectedCHMM:
                                                                                                                     t + 1] - 1
 
         try:
-            self.check_states(states,observation)
+            self.check_states(states, observation)
         except AssertionError:
             np.set_printoptions(formatter={'float': '{: 0.2e}'.format}, threshold=1000000)
             print('state error')
@@ -318,7 +265,7 @@ class ConnectedCHMM:
 
         return states, log_delta[-1, -1]
 
-    def check_states(self, states,observation=None):
+    def check_states(self, states, observation=None):
         assert states[0] == 0
         assert states[-1] == self.N - 1
         diff_states = np.diff(states)
@@ -352,41 +299,6 @@ class ConnectedCHMM:
             log_alpha1[:, t] = logsumexp(log_a + log_alpha1[:, t - 1].reshape((-1, 1)), axis=0) + log_b[:, t]
         # assert np.allclose(log_alpha0, log_alpha1)
         return logsumexp(log_alpha1[:, -1]), log_alpha1
-
-    def forward_backward(self):
-        # to avoid cal b
-        o = self.wav_feats
-        T = o.shape[0]
-        n = o.shape[1]
-        assert o is not None
-
-        b = self.get_b()
-        log_a = elog(self.A)
-        log_b = elog(b)
-        # print('log_b')
-        # print(log_b.shape)
-        # print(log_b)
-
-        # foward
-        log_alpha = np.zeros((self.N, T + 1))
-        log_alpha[:, 0] = elog(np.array(self.pi)) + log_b[:, 0]
-        # print('elog pi')
-        # print(elog(np.array(self.pi)))
-        # print('log alpha 0')
-        # print(log_alpha[:, 0])
-        for t in range(1, T + 1):
-            # TODO optimize to one loop
-            for i in range(self.N):
-                log_alpha[i, t] = logsumexp(log_a[:, i] + log_alpha[:, t - 1]) + log_b[i, t]
-            # alpha[:, t] = self.A.T.dot(alpha[:, t - 1]) * b[:, t]
-
-        # backward
-        log_beta = np.zeros((self.N, T + 1))
-        for t in range(T - 1, -1, -1):
-            for i in range(self.N):
-                log_beta[i, t] = logsumexp(log_a[i, :] + log_beta[:, t + 1] + log_b[:, t + 1])
-
-        return log_alpha, log_beta
 
 
 if __name__ == '__main__':

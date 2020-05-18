@@ -64,54 +64,10 @@ if __name__ == '__main__':
 
     print('init OK')
     eps = 1
-    max_steps = 50
+    max_steps = 20
     last_dataset_loglikelihood = 0
     dataset_loglikelihood_history = np.zeros((max_steps,))
     for step in range(max_steps):
-        print('Step {}:'.format(step))
-        print('e-step')
-        dataset_loglikelihood = 0
-        with tqdm(desc='E-step', unit='it', total=len(wav_hmm)) as pbar:
-            for it, (wav_id, hmm) in enumerate(wav_hmm.items()):
-                hmm.reset()
-                wav_features = features[wav_id]
-                states, logprob = hmm.decode_viterbi()
-                loglikelihood, log_alpha = hmm.forward()
-                dataset_loglikelihood += loglikelihood
-                hmm.assign(wav_features, states)
-                if loglikelihood < -1e8:
-                    print('loglikelihood')
-                    print(loglikelihood)
-                    print('states')
-                    print(states)
-                    print('log alpha')
-                    print(log_alpha)
-                    print('log beta')
-                    print(hmm.get_log_b())
-                    print('log a')
-                    print(hmm.log_a)
-                    break
-
-                pbar.set_postfix(loglikelihood=loglikelihood, len=hmm.N)
-                pbar.update()
-
-        dataset_loglikelihood = dataset_loglikelihood / len(wav_hmm)
-        dataset_loglikelihood_history[step] = dataset_loglikelihood
-        print('loglikelihood:', dataset_loglikelihood)
-        if np.fabs(dataset_loglikelihood - last_dataset_loglikelihood) < eps:
-            print('eps reached, Done')
-            break
-        last_dataset_loglikelihood = dataset_loglikelihood
-        # m-step
-        print('M-step')
-        with tqdm(desc='M-step', unit='it', total=len(phoneme_hmms)) as pbar:
-            for it, (phoneme, phoneme_hmm) in enumerate(phoneme_hmms.items()):
-                phoneme_hmm.update(verbose=False)
-                phoneme_hmm.reset()
-
-                pbar.set_postfix(phoneme=phoneme)
-                pbar.update()
-
         print('save model...')
         step_save_path = os.path.join(save_path, 'step{}'.format(step + 1))
         os.mkdir(step_save_path)
@@ -119,6 +75,34 @@ if __name__ == '__main__':
             phoneme_hmm.save(os.path.join(step_save_path, phoneme + '.hdf5'))
         np.save(os.path.join(save_path, 'history.npy'), dataset_loglikelihood_history)
 
+        # e-step
+        dataset_loglikelihood = 0
+        with tqdm(desc='Epoch {}, E-step'.format(step+1), unit='it', total=len(wav_hmm)) as pbar:
+            for it, (wav_id, hmm) in enumerate(wav_hmm.items()):
+                hmm.reset()
+                wav_features = features[wav_id]
+                states, logprob = hmm.decode_viterbi()
+                loglikelihood, log_alpha = hmm.forward()
+                dataset_loglikelihood += loglikelihood
+                hmm.assign(wav_features, states)
+                pbar.set_postfix(loglikelihood=loglikelihood, len=hmm.N)
+                pbar.update()
+
+        dataset_loglikelihood = dataset_loglikelihood / len(wav_hmm)
+        dataset_loglikelihood_history[step] = dataset_loglikelihood
+        print('Average Loglikelihood:', dataset_loglikelihood)
+        if np.fabs(dataset_loglikelihood - last_dataset_loglikelihood) < eps:
+            print('eps reached, Done')
+            break
+        last_dataset_loglikelihood = dataset_loglikelihood
+        # m-step
+        with tqdm(desc='Epoch {}, M-step'.format(step+1), unit='it', total=len(phoneme_hmms)) as pbar:
+            for it, (phoneme, phoneme_hmm) in enumerate(phoneme_hmms.items()):
+                phoneme_hmm.update(verbose=False)
+                phoneme_hmm.reset()
+
+                pbar.set_postfix(phoneme=phoneme)
+                pbar.update()
     else:
         print('step reached, Done')
     print('Done')
