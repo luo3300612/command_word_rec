@@ -13,7 +13,7 @@ import matplotlib.pyplot as plt
 
 # About Data
 data_root = 'data'
-phone_numbers = ['13776677136']
+phone_numbers = ['raw']
 datasets = ['A', 'B', 'C', 'D', 'E', 'F', 'G']
 
 # About prepare

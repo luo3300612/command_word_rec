@@ -14,8 +14,8 @@ out = {}
 
 syllable_to_phones = {}
 
-word_to_syllable_file = sys.argv[1]  # layer-1 mapping
-syllable_to_phone_file = sys.argv[2]  # layer-2 mapping
+word_to_syllable_file = 'DaCiDian/word_to_pinyin.txt'  # layer-1 mapping
+syllable_to_phone_file = 'DaCiDian/pinyin_to_phone.txt'  # layer-2 mapping
 
 for l in open(syllable_to_phone_file, encoding='utf-8'):  # "ZHENG	zh eng"
     cols = l.strip().split('\t')
@@ -39,4 +39,5 @@ for l in open(word_to_syllable_file, encoding='utf-8'):  # "15	YI_1 WU_3;YAO_1 W
         out[word] = ' '.join(phone_seq)
     # sys.stdout.write(word + '\t' + ' '.join(phone_seq) + '\n')
 
-json.dump(out, open('./lexicon.json', 'w', encoding='utf-8'))
+json.dump(out, open('DaCiDian/lexicon.json', 'w', encoding='utf-8'))
+print('Done')
