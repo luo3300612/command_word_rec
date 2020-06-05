@@ -20,7 +20,7 @@ phoneme whose frequency less than 5 will be replaced by 'UNK'
 ```angular2
 python main.py
 ```
-it takes about 4 min for a step. Default GMM feature dim is 13. It can
+it takes about 4 min for a step on my Win10 and about 45s on my Manjaro Linux. Default GMM feature dim is 13. It can
 give better acc on test set than dim=39
 ### Step4, Test
 ```angular2
