@@ -10,7 +10,6 @@ Build lexicon which maps a character to phonemes
 ```angular2
 python DaCiDian/DaCiDian.py
 ```
-If you want to test my model, you can skip step2, step3.
 ### Step2, Prepare dataset 
 ```angular2
 python prep_data.py --mfcc_dim 13 --min_thresh 5
